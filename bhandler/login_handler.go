@@ -3,6 +3,7 @@ package bhandler
 import (
 	"encoding/hex"
 	"fmt"
+	"time"
 
 	"github.com/liuguangw/billing_go/common"
 	"github.com/liuguangw/billing_go/models"
@@ -33,7 +34,7 @@ type LoginHandler struct {
 	AutoReg          bool //自动注册
 	BillType         int  //billing类型
 	MaxClientCount   int  //最多允许进入的用户数量(0表示无限制)
-	PcMaxClientCount int  //每台电脑最多允许进入的用户数量(0表示无限制)
+	IPMaxClientCount int  //每个IP最多允许进入的用户数量(0表示无限制)
 }
 
 // GetType 可以处理的消息类型
@@ -121,15 +122,15 @@ func (h *LoginHandler) GetResponse(request *common.BillingPacket) *common.Billin
 			loginResultTxt = "reach max_client_count limit"
 		}
 	}
-	//判断此电脑的连接数是否达到限制
-	if loginResult == loginCodeSuccess && h.PcMaxClientCount > 0 {
-		macCounter := 0
-		if value, valueExists := h.Resource.MacCounters[macMd5]; valueExists {
-			macCounter = value
+	//判断此IP的连接数是否达到限制
+	if loginResult == loginCodeSuccess && h.IPMaxClientCount > 0 {
+		ipCounter := 0
+		if value, valueExists := h.Resource.IPCounters[loginIP]; valueExists {
+			ipCounter = value
 		}
-		if macCounter >= h.PcMaxClientCount {
+		if ipCounter >= h.IPMaxClientCount {
 			loginResult = loginCodeOtherError
-			loginResultTxt = "reach pc_max_client_count limit"
+			loginResultTxt = "reach ip_max_client_count limit"
 		}
 	}
 	//将用户信息写入LoginUsers
@@ -137,6 +138,21 @@ func (h *LoginHandler) GetResponse(request *common.BillingPacket) *common.Billin
 		h.Resource.LoginUsers[string(username)] = &common.ClientInfo{
 			IP:     loginIP,
 			MacMd5: macMd5,
+		}
+		//只在成功登录时增加IP计数和记录活跃连接
+		if loginResult == loginCodeSuccess {
+			//增加IP计数
+			if ipCounter, exists := h.Resource.IPCounters[loginIP]; exists {
+				h.Resource.IPCounters[loginIP] = ipCounter + 1
+			} else {
+				h.Resource.IPCounters[loginIP] = 1
+			}
+			//记录活跃连接
+			h.Resource.ActiveConnections[string(username)] = &common.ConnectionInfo{
+				Username:     string(username),
+				IP:           loginIP,
+				LastActivity: time.Now(),
+			}
 		}
 	}
 	h.Resource.Logger.Info(fmt.Sprintf("user [%s] try to login from %s(Mac_md5=%s) : %s", username, loginIP, macMd5, loginResultTxt))

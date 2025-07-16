@@ -27,17 +27,21 @@ func (h *LogoutHandler) GetResponse(request *common.BillingPacket) *common.Billi
 	usernameStr := string(username)
 	if clientInfo, userOnline := h.Resource.OnlineUsers[usernameStr]; userOnline {
 		delete(h.Resource.OnlineUsers, usernameStr)
-		macMd5 := clientInfo.MacMd5
-		if macMd5 != "" {
-			macCounter := 0
-			if value, valueExists := h.Resource.MacCounters[macMd5]; valueExists {
-				macCounter = value
+		ip := clientInfo.IP
+		if ip != "" {
+			ipCounter := 0
+			if value, valueExists := h.Resource.IPCounters[ip]; valueExists {
+				ipCounter = value
 			}
-			macCounter--
-			if macCounter < 0 {
-				macCounter = 0
+			ipCounter--
+			if ipCounter < 0 {
+				ipCounter = 0
 			}
-			h.Resource.MacCounters[macMd5] = macCounter
+			h.Resource.IPCounters[ip] = ipCounter
+		}
+		// 从活跃连接中删除
+		if h.Resource.ActiveConnections != nil {
+			delete(h.Resource.ActiveConnections, usernameStr)
 		}
 	}
 	//

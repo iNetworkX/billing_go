@@ -1,12 +1,19 @@
 package bhandler
 
-import "github.com/liuguangw/billing_go/common"
+import (
+	"github.com/liuguangw/billing_go/common"
+	"time"
+)
 
 // markOnline 标记用户为在线状态
-func markOnline(loginUsers, onlineUsers map[string]*common.ClientInfo, macCounters map[string]int,
-	username string, clientInfo *common.ClientInfo) {
+func markOnline(loginUsers, onlineUsers map[string]*common.ClientInfo, ipCounters map[string]int,
+	activeConnections map[string]*common.ConnectionInfo, username string, clientInfo *common.ClientInfo) {
 	//已经标记为登录了
 	if _, userOnline := onlineUsers[username]; userOnline {
+		// 更新活跃连接时间戳
+		if conn, exists := activeConnections[username]; exists {
+			conn.LastActivity = time.Now()
+		}
 		return
 	}
 	//从loginUsers中删除
@@ -20,13 +27,21 @@ func markOnline(loginUsers, onlineUsers map[string]*common.ClientInfo, macCounte
 	}
 	//写入onlineUsers
 	onlineUsers[username] = clientInfo
-	//mac计数+1
-	if clientInfo.MacMd5 != "" {
+	//IP计数+1
+	if clientInfo.IP != "" {
 		counterValue := 0
-		if value, valueExists := macCounters[clientInfo.MacMd5]; valueExists {
+		if value, valueExists := ipCounters[clientInfo.IP]; valueExists {
 			counterValue = value
 		}
 		counterValue++
-		macCounters[clientInfo.MacMd5] = counterValue
+		ipCounters[clientInfo.IP] = counterValue
+	}
+	// 更新活跃连接
+	if activeConnections != nil {
+		activeConnections[username] = &common.ConnectionInfo{
+			Username:     username,
+			IP:           clientInfo.IP,
+			LastActivity: time.Now(),
+		}
 	}
 }

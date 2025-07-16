@@ -56,12 +56,12 @@ func (h *CommandHandler) showUsers(response *common.BillingPacket) {
 		}
 	}
 	//
-	content += "\n\nmac counters:"
-	if len(h.Resource.MacCounters) == 0 {
+	content += "\n\nIP counters:"
+	if len(h.Resource.IPCounters) == 0 {
 		content += " empty"
 	} else {
-		for macMd5, counterValue := range h.Resource.MacCounters {
-			content += "\n\t" + macMd5 + ": " + strconv.Itoa(counterValue)
+		for ip, counterValue := range h.Resource.IPCounters {
+			content += "\n\t" + ip + ": " + strconv.Itoa(counterValue)
 		}
 	}
 	response.OpData = []byte(content)

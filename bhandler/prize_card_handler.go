@@ -38,7 +38,7 @@ func (h *PrizeCardHandler) GetResponse(request *common.BillingPacket) *common.Bi
 		IP:       loginIP,
 		CharName: string(charName),
 	}
-	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.MacCounters, string(username), clientInfo)
+	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.IPCounters, h.Resource.ActiveConnections, string(username), clientInfo)
 	h.Resource.Logger.Info(string(charName) + "(" + string(username) + ") use card: " + string(cardData))
 	opData := make([]byte, 0, usernameLength+2)
 	opData = append(opData, usernameLength)

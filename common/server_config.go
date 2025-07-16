@@ -22,6 +22,6 @@ type ServerConfig struct {
 	AllowIps         []string `json:"allow_ips" yaml:"allow_ips"`                     //允许连接billing的服务端IP,为空则表示不限制
 	PointFix         int      `json:"point_fix" yaml:"point_fix"`                     //用于查询点数时少1或者多1点的修正(修正值一般为0或者1)
 	MaxClientCount   int      `json:"max_client_count" yaml:"max_client_count"`       //最多允许进入的用户数量(0表示无限制)
-	PcMaxClientCount int      `json:"pc_max_client_count" yaml:"pc_max_client_count"` //每台电脑最多允许进入的用户数量(0表示无限制)
+	IPMaxClientCount int      `json:"ip_max_client_count" yaml:"ip_max_client_count"` //每个IP最多允许进入的用户数量(0表示无限制)
 	BillType         int      `json:"bill_type" yaml:"bill_type"`                     //billing类型 0经典 1怀旧
 }

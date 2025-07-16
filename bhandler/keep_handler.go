@@ -29,7 +29,7 @@ func (h *KeepHandler) GetResponse(request *common.BillingPacket) *common.Billing
 	playerLevel := packetReader.ReadUint16()
 	//标记在线
 	clientInfo := &common.ClientInfo{}
-	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.MacCounters, string(username), clientInfo)
+	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.IPCounters, h.Resource.ActiveConnections, string(username), clientInfo)
 	h.Resource.Logger.Info(fmt.Sprintf("keep: user [%s] level %d", username, playerLevel))
 	//Packets::BLRetBillingKeep
 	opData := make([]byte, 0, usernameLength+2+12)

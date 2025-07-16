@@ -38,7 +38,7 @@ func (h *PrizeFetchHandler) GetResponse(request *common.BillingPacket) *common.B
 		IP:       loginIP,
 		CharName: string(charName),
 	}
-	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.MacCounters, string(username), clientInfo)
+	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.IPCounters, h.Resource.ActiveConnections, string(username), clientInfo)
 
 	//角色id
 	charguid := packetReader.ReadInt()

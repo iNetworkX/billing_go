@@ -50,7 +50,7 @@ func (h *PrizeHandler) GetResponse(request *common.BillingPacket) *common.Billin
 		IP:       loginIP,
 		CharName: string(charName),
 	}
-	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.MacCounters, string(username), clientInfo)
+	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.IPCounters, h.Resource.ActiveConnections, string(username), clientInfo)
 	if h.BillType == common.BillTypeHuaiJiu {
 		//世界id
 		worldId := packetReader.ReadLeUint16()

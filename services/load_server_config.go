@@ -24,7 +24,7 @@ func defaultServerConfig() *common.ServerConfig {
 		AutoReg:          true,
 		PointFix:         0,
 		MaxClientCount:   500,
-		PcMaxClientCount: 3,
+		IPMaxClientCount: 3,
 	}
 }
 

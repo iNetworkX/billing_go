@@ -35,7 +35,7 @@ func (h *EnterGameHandler) GetResponse(request *common.BillingPacket) *common.Bi
 	clientInfo := &common.ClientInfo{
 		CharName: string(charName),
 	}
-	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.MacCounters, string(username), clientInfo)
+	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.IPCounters, h.Resource.ActiveConnections, string(username), clientInfo)
 	//角色id
 	charguid := packetReader.ReadInt()
 	//

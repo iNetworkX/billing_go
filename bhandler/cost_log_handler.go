@@ -42,7 +42,7 @@ func (h *CostLogHandler) GetResponse(request *common.BillingPacket) *common.Bill
 		IP:       loginIP,
 		CharName: string(charName),
 	}
-	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.MacCounters, string(username), clientInfo)
+	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.IPCounters, h.Resource.ActiveConnections, string(username), clientInfo)
 	//Packets::LBLCostLog
 	opData := make([]byte, 0, mSerialKeyLength+1)
 	opData = append(opData, mSerialKey...)

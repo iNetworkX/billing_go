@@ -17,11 +17,12 @@ func (s *Server) addHandler(handlers ...common.PacketHandler) {
 // loadHandlers 载入handlers
 func (s *Server) loadHandlers(cancel context.CancelFunc) {
 	resource := &common.HandlerResource{
-		Db:          s.database,
-		Logger:      s.logger,
-		LoginUsers:  make(map[string]*common.ClientInfo),
-		OnlineUsers: make(map[string]*common.ClientInfo),
-		MacCounters: make(map[string]int),
+		Db:                s.database,
+		Logger:            s.logger,
+		LoginUsers:        make(map[string]*common.ClientInfo),
+		OnlineUsers:       make(map[string]*common.ClientInfo),
+		IPCounters:        make(map[string]int),
+		ActiveConnections: make(map[string]*common.ConnectionInfo),
 	}
 	s.handlers = make(map[byte]common.PacketHandler)
 	s.addHandler(
@@ -38,7 +39,7 @@ func (s *Server) loadHandlers(cancel context.CancelFunc) {
 			AutoReg:          s.config.AutoReg,
 			BillType:         s.config.BillType,
 			MaxClientCount:   s.config.MaxClientCount,
-			PcMaxClientCount: s.config.PcMaxClientCount,
+			IPMaxClientCount: s.config.IPMaxClientCount,
 		},
 		&bhandler.EnterGameHandler{
 			Resource: resource,
