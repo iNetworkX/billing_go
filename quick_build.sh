@@ -19,9 +19,10 @@ fi
 echo "Cleaning previous build artifacts..."
 make clean 2>/dev/null || true
 
-# Build the project
-echo "Building billing_go..."
-make
+# Build the project with production flags for VPS compatibility
+echo "Building billing_go for production deployment..."
+echo "Using CGO_ENABLED=0 for static binary compatible with older GLIBC"
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o billing
 
 # Check if build was successful
 if [ -f "./billing" ]; then

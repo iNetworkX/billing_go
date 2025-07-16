@@ -59,9 +59,15 @@ func (s *Server) performHealthCheck(resource *common.HandlerResource) {
 			continue
 		}
 
+		// 如果IP为空，使用占位符避免空字符串日志
+		logIP := connInfo.IP
+		if logIP == "" {
+			logIP = "unknown"
+		}
+		
 		s.logger.Warn("Cleaning stale connection",
 			zap.String("username", username),
-			zap.String("ip", connInfo.IP),
+			zap.String("ip", logIP),
 			zap.Duration("inactive_duration", now.Sub(connInfo.LastActivity)))
 
 		// 从在线用户中移除
@@ -94,7 +100,7 @@ func (s *Server) performHealthCheck(resource *common.HandlerResource) {
 		delete(resource.ActiveConnections, username)
 		s.logger.Info("Cleaned stale connection",
 			zap.String("username", username),
-			zap.String("ip", connInfo.IP))
+			zap.String("ip", logIP))
 	}
 
 	if len(staleConnections) > 0 {
