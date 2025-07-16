@@ -18,14 +18,31 @@
 
 ---
 
-## Task 2: Update logout_handler.go ⚠️ PARTIALLY COMPLETED
+## Task 2: Update logout_handler.go ✅ COMPLETED
 - [x] Decrement IP counters when player logs out
 - [x] Remove user from `ActiveConnections` map
 - [x] Clean up IP counter if it reaches 0
-- [ ] Handle both explicit logout and connection cleanup scenarios (needs review)
+- [x] Handle both explicit logout and connection cleanup scenarios
+- [x] Handle logout for users in both `OnlineUsers` and `LoginUsers` states
 
 **Files modified:**
-- `bhandler/logout_handler.go` - Basic implementation done, edge cases need review
+- `bhandler/logout_handler.go` - Complete implementation with all edge cases handled
+
+---
+
+## Task 2 Summary:
+**What was completed:**
+- Enhanced IP counter cleanup to prevent memory leaks by removing entries when counter reaches 0
+- Added support for handling logout of users in both `OnlineUsers` and `LoginUsers` states
+- Ensured proper cleanup of `ActiveConnections` for all user states
+- Added bounds checking and proper error handling
+
+**Key changes in logout_handler.go:**
+- Lines 41-45: Delete IP counter from map when it reaches 0 (for OnlineUsers)
+- Lines 52-75: Added new logic to handle users who logged in but haven't entered game yet
+- Lines 66-70: Delete IP counter from map when it reaches 0 (for LoginUsers)
+
+**Note:** Abrupt disconnections (without logout packet) still require Task 3 implementation for automatic cleanup.
 
 ---
 

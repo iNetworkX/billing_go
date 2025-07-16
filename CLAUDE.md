@@ -175,12 +175,23 @@ The project follows a clean architecture pattern with the following structure:
    - Updated `logout_handler.go` to use IP counters (basic implementation, full Task 2 still pending)
    - Updated `command_handler.go` to display IP counters instead of MAC counters (basic implementation, full Task 4 still pending)
 
-### Work Remaining:
-1. **Complete logout_handler.go updates** (Task 2):
-   - Ensure proper cleanup of IP counters and active connections
-   - Handle edge cases for connection cleanup
+### Work Completed (Task 2 - logout_handler.go):
+1. **Enhanced IP counter cleanup**:
+   - IP counter entries are now deleted from the map when they reach 0 to prevent memory leaks
+   - Proper bounds checking ensures counter never goes negative
 
-2. **Implement connection health check** (Task 3):
+2. **Extended logout handling**:
+   - Now handles users in both `OnlineUsers` (in-game) and `LoginUsers` (logged in but not in game) states
+   - Ensures consistent cleanup regardless of user state
+
+3. **Complete cleanup flow**:
+   - Removes user from appropriate state map (OnlineUsers or LoginUsers)
+   - Decrements IP counter for the user's IP
+   - Removes IP counter entry if it reaches 0
+   - Removes user from ActiveConnections map
+
+### Work Remaining:
+1. **Implement connection health check** (Task 3):
    - Add periodic goroutine to check for stale connections
    - Remove disconnected clients from IP counters and active connections
    - Handle cases where Windows clients disconnect without sending logout
