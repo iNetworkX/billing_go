@@ -14,17 +14,18 @@ import (
 // defaultServerConfig 默认配置
 func defaultServerConfig() *common.ServerConfig {
 	return &common.ServerConfig{
-		IP:               "127.0.0.1",
-		Port:             12680,
-		DbHost:           "localhost",
-		DbPort:           3306,
-		DbUser:           "root",
-		DbPassword:       "root",
-		DbName:           "web",
-		AutoReg:          true,
-		PointFix:         0,
-		MaxClientCount:   500,
-		IPMaxClientCount: 3,
+		IP:                "127.0.0.1",
+		Port:              12680,
+		DbHost:            "localhost",
+		DbPort:            3306,
+		DbUser:            "root",
+		DbPassword:        "root",
+		DbName:            "web",
+		AutoReg:           true,
+		PointFix:          0,
+		MaxClientCount:    500,
+		IPMaxClientCount:  3,
+		ConnectionTimeout: 300,
 	}
 }
 

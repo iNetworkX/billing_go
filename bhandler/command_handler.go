@@ -64,5 +64,14 @@ func (h *CommandHandler) showUsers(response *common.BillingPacket) {
 			content += "\n\t" + ip + ": " + strconv.Itoa(counterValue)
 		}
 	}
+	//
+	content += "\n\nactive connections:"
+	if len(h.Resource.ActiveConnections) == 0 {
+		content += " empty"
+	} else {
+		for username, connInfo := range h.Resource.ActiveConnections {
+			content += "\n\t" + username + " (" + connInfo.IP + "): last activity " + connInfo.LastActivity.Format("2006-01-02 15:04:05")
+		}
+	}
 	response.OpData = []byte(content)
 }

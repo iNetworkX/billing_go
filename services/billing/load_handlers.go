@@ -15,7 +15,7 @@ func (s *Server) addHandler(handlers ...common.PacketHandler) {
 }
 
 // loadHandlers 载入handlers
-func (s *Server) loadHandlers(cancel context.CancelFunc) {
+func (s *Server) loadHandlers(cancel context.CancelFunc) *common.HandlerResource {
 	resource := &common.HandlerResource{
 		Db:                s.database,
 		Logger:            s.logger,
@@ -79,4 +79,5 @@ func (s *Server) loadHandlers(cancel context.CancelFunc) {
 			Resource: resource,
 		},
 	)
+	return resource
 }
