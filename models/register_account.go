@@ -28,12 +28,12 @@ func RegisterAccount(db *sql.DB, account *Account) error {
 		return errors.New("email " + account.Email.String + " is not allowed")
 	}
 	//插入
-	stmt, err := db.Prepare("INSERT INTO account (name, password, question, email) VALUES (?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO account (name, password, email) VALUES (?, ?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	if _, err := stmt.Exec(account.Name, account.Password, account.Question, account.Email); err != nil {
+	if _, err := stmt.Exec(account.Name, account.Password, account.Email); err != nil {
 		return err
 	}
 	return nil

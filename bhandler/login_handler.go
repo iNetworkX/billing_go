@@ -98,9 +98,6 @@ func (h *LoginHandler) GetResponse(request *common.BillingPacket) *common.Billin
 		} else if err == models.ErrorLoginInvalidPassword {
 			//密码错误
 			loginResult = loginCodeWrongPassword
-		} else if err == models.ErrorLoginAccountLocked {
-			//停权
-			loginResult = loginCodeForbit
 		} else if err == models.ErrorLoginAccountOnline {
 			//用户已在线
 			loginResult = loginCodeUserOnline

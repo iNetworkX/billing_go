@@ -6,13 +6,13 @@ import "database/sql"
 func GetAccountByUsername(db *sql.DB, username string) (*Account, error) {
 	var account Account
 	row := db.QueryRow("SELECT id,name,password"+
-		",question,answer,email,id_card,point"+
+		",email,point"+
 		" FROM account WHERE name=?", username)
 	if err := row.Err(); err != nil {
 		return nil, err
 	}
 	if err := row.Scan(&account.ID, &account.Name, &account.Password,
-		&account.Question, &account.Answer, &account.Email, &account.IDCard, &account.Point); err != nil {
+		&account.Email, &account.Point); err != nil {
 		if err == sql.ErrNoRows {
 			// 查询不到此用户名的记录
 			return nil, nil

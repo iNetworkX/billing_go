@@ -27,9 +27,9 @@ func (h *RegisterHandler) GetResponse(request *common.BillingPacket) *common.Bil
 	usernameLength := packetReader.ReadByteValue()
 	tmpLength := int(usernameLength)
 	username := packetReader.ReadBytes(tmpLength)
-	//超级密码
+	//超级密码 (skip this field)
 	tmpLength = int(packetReader.ReadByteValue())
-	superPassword := string(packetReader.ReadBytes(tmpLength))
+	packetReader.ReadBytes(tmpLength)
 	//密码
 	tmpLength = int(packetReader.ReadByteValue())
 	password := string(packetReader.ReadBytes(tmpLength))
@@ -43,10 +43,6 @@ func (h *RegisterHandler) GetResponse(request *common.BillingPacket) *common.Bil
 	account := &models.Account{
 		Name:     string(username),
 		Password: password,
-		Question: sql.NullString{
-			String: superPassword,
-			Valid:  true,
-		},
 		Email: sql.NullString{
 			String: email,
 			Valid:  true,

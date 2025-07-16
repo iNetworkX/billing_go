@@ -107,6 +107,28 @@ The project follows a clean architecture pattern with the following structure:
 - Database operations are centralized in the `models` package
 - Passwords are stored as MD5 hashes (for game compatibility)
 
+#### Database Schema
+**account** table:
+- `id` (int32) - Primary Key, Account ID
+- `name` (string) - Username (max 50 characters)
+- `password` (string) - MD5 encrypted password
+- `email` (sql.NullString) - Registration email (cannot be null or "1@1.com")
+- `point` (int) - Points/credits
+
+**account_cfg** table:
+- `charguid` (int) - Character ID/GUID
+- `isgm` (int) - GM flag (>0 means GM status)
+
+**account_prize** table:
+- `id` (bigint) - Primary Key, auto-increment
+- `account` (varchar(50)) - Account name
+- `world` (int) - World ID
+- `charguid` (int) - Player GUID
+- `itemid` (int) - Item ID
+- `itemnum` (int) - Item quantity
+- `isget` (smallint) - Claim status
+- `validtime` (int) - Unix timestamp validity
+
 ### Network Protocol
 - TCP server listening on configurable port
 - Mixed Big-Endian and Little-Endian byte order
@@ -343,3 +365,48 @@ The implementation has been designed with the following testing scenarios in min
 - IP counter cleanup is automatic to prevent memory leaks
 - All logging includes structured fields for easy monitoring
 - The system maintains backward compatibility with existing game clients
+
+## Recent Changes (Database Schema Cleanup)
+
+### Account Table Simplification
+**Date**: 2025-01-16  
+**Changes Made**:
+1. **Removed deprecated fields** from the `account` table:
+   - `question` (sql.NullString) - Previously used for security questions/super password
+   - `answer` (sql.NullString) - Previously used for security answers
+   - `id_card` (sql.NullString) - Previously used for account locking ("1" = locked)
+
+2. **Updated all related code**:
+   - Modified `models/account.go` struct definition
+   - Updated SQL queries in `models/get_account_by_username.go`
+   - Updated SQL queries in `models/register_account.go`
+   - Removed account locking logic from `models/check_login.go`
+   - Removed `ErrorLoginAccountLocked` error definition
+   - Updated `bhandler/login_handler.go` to remove account lock checking
+   - Updated `bhandler/register_handler.go` to skip super password field
+
+3. **Impact**:
+   - Account locking functionality has been removed
+   - Super password/security question functionality has been removed
+   - Database schema is now simplified and more focused
+   - All existing functionality continues to work normally
+
+### Database Migration Notes
+If you have existing databases with these fields, you may need to:
+1. **Option 1**: Keep the columns in the database but they will be ignored by the application
+2. **Option 2**: Remove the columns from the database:
+   ```sql
+   ALTER TABLE account DROP COLUMN question;
+   ALTER TABLE account DROP COLUMN answer;
+   ALTER TABLE account DROP COLUMN id_card;
+   ```
+
+### Current Account Table Schema
+After the cleanup, the `account` table now contains only these essential fields:
+- `id` (int32) - Primary Key, Account ID
+- `name` (string) - Username (max 50 characters)
+- `password` (string) - MD5 encrypted password
+- `email` (sql.NullString) - Registration email (cannot be null or "1@1.com")
+- `point` (int) - Points/credits
+
+This simplified schema focuses on core authentication and billing functionality while removing legacy features that are no longer needed.
