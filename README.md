@@ -1,142 +1,143 @@
 # billing_go
 
-这是一个用 Go 语言编写的 billing 验证服务器。
+A billing verification server written in Go for game account authentication and billing management.
 
-## 运行环境要求
+## System Requirements
 
-支持以下任意一种运行环境
+Supports any of the following runtime environments:
 
-- Linux (Linux 内核版本 2.6.32 或者以上版本)
+- Linux (Kernel version 2.6.32 or higher)
+- Windows 10, Server 2016 or higher
 
-- Windows 10, Server 2016 或者更高版本
+  > Refer to Go language system requirements: https://go.dev/wiki/MinimumRequirements
 
-  > 参考 Go 语言程序的系统需求，https://go.dev/wiki/MinimumRequirements
+## Bug Reports
 
-## bug 反馈
+If you encounter issues using this program, please submit an Issue describing the problem and attach relevant log files.
 
-如果使用此程序出现问题，可以提交 Issue 说明你所遇到的问题，并附上相关日志文件。
+**billing** logs are located in the same directory as the billing program, with the filename `billing.log`. This file is automatically created on first run.
 
-**billing** 的日志在 billing 程序所在的目录，文件名为 billing.log，首次运行时会自动创建此文件。
+You'll also need **Login** server logs, as only the Login server connects to the billing server.
 
-此外还需要 **Login** 服务器的日志，因为只有 Login 服务器会连接 billing 服务器。
-
-可以修改一下运行脚本 `run.sh`，把 Login 服务器的日志写入某个文件，这样就可以在问题复现时从日志中查询到原因。
+You can modify the run script `run.sh` to write Login server logs to a file for easier debugging:
 
 ```sh
-# 记录Login服务器日志的方法
+# Method for recording Login server logs
 
-# 原命令
+# Original command
 ./Login >/dev/null 2>&1 &
 
-# 修改/dev/null 为 /home/login.log
-# 修改后,日志文件会保存到/home/login.log
+# Change /dev/null to /home/login.log
+# After modification, logs will be saved to /home/login.log
 ./Login >/home/login.log 2>&1 &
 ```
 
-## 获取程序包
+## Getting the Program
 
-有以下两种方式获取此程序包。
+There are two ways to obtain this program:
 
-### 1.使用我编译好的版本
+### 1. Use Pre-compiled Versions
 
-[点击这里](https://github.com/liuguangw/billing_go/releases)查看我编译好的各版本, 可能没有最新的编译版本
+[Click here](https://github.com/liuguangw/billing_go/releases) to view pre-compiled versions. Note that the latest compiled version may not always be available.
 
-### 2.手工编译
+### 2. Manual Compilation
 
-如果你想亲自进行编译，需要确保你的操作系统满足以下条件
+If you want to compile manually, ensure your system meets the following requirements:
 
-- 设备已连接网络
-- 已安装 Git
-- 已安装 make(仅 linux 需要)
-- 已安装 Go 1.23 或者更高版本
+- Internet connection
+- Git installed
+- make installed (Linux only)
+- Go 1.23 or higher installed
 
-linux 使用 make 进行编译
+**Linux compilation using make:**
 
 ```bash
-# make命令说明
+# Make commands
 
-# 构建
+# Build
 make
 
-# 清理
+# Clean
 make clean
 
-# 构建并且打包32位
+# Build and package 32-bit
 make x32
 
-# 构建并且打包64位
+# Build and package 64-bit
 make x64
 
-# 构建并且打包所有架构
+# Build and package all architectures
 make all
 ```
 
-windows 下直接双击 build.bat 进行编译
+**Windows compilation:** Double-click `build.bat`
 
-## 相关文件说明
+## File Description
 
 ```
-billing       - Linux版本的billing服务器
-billing.exe   - Windows版本的
-config.yaml   - 配置文件
+billing       - Linux version of billing server
+billing.exe   - Windows version
+config.yaml   - Configuration file
 ```
 
-## 配置文件
+## Configuration File
 
-配置文件和程序必须放在同一个目录下，配置文件支持两种格式`yaml`或者`json`，配置文件名称为`config.yaml`或者`config.json`，如果两个文件都存在，则`yaml`格式优先。
+The configuration file must be in the same directory as the program. Supports two formats: `yaml` or `json`. File names should be `config.yaml` or `config.json`. If both files exist, `yaml` format takes priority.
 
-### yaml 格式的配置示例
+### YAML Configuration Example
 
 ```yaml
-# #后面的为注释
-# 字符串可以不加引号,除非里面有#字符,所以如果数据库密码有#字符、空格时,就要加上引号
+# Lines starting with # are comments
+# Strings don't need quotes unless they contain # characters
+# If database password contains # or spaces, use quotes
 #
-#billing服务器的ip，默认127.0.0.1即可
+# Billing server IP, default 127.0.0.1
 ip: 127.0.0.1
 #
-#billing服务器监听的端口(自定义一个未被占用的端口即可)
+# Billing server listening port (choose an unused port)
 port: 12680
 #
-#MySQL服务器的ip或者主机名
+# MySQL server IP or hostname
 db_host: localhost
 #
-#MySQL服务器端口
+# MySQL server port
 db_port: 3306
 #
-#MySQL用户名
+# MySQL username
 db_user: root
 #
-#MySQL密码
+# MySQL password
 db_password: 'root'
 #
-#账号数据库名(一般为web)
+# Account database name (usually 'web')
 db_name: web
 #
-#只有在老版本MySQL报old_password错误时,才需要设置为true
+# Only set to true when old MySQL versions report old_password error
 allow_old_password: false
 #
-#用户登录的账号不存在时,是否引导用户进行注册
+# Whether to guide users to register when login account doesn't exist
 auto_reg: true
 #
-#允许的服务端连接ip,为空时表示允许任何ip,不为空时只允许指定的ip连接,
+# Allowed server connection IPs. Empty means allow any IP
+# When not empty, only specified IPs are allowed to connect
 #allow_ips:
 #  - 1.1.1.1
 #  - 127.0.0.1
 #
-#点数修正, 在查询点数时,显示的值多1点或者少1点时才需要配置此值, 正常情况设置为0
-#如果显示的点数少1点则配置为1(这是临时方案,一般是lua脚本有问题,lua脚本不应该把返回的数值减一,建议修改客户端查询点数的脚本)
-#如果显示的点数多一点则配置为-1(一般不可能发生)
+# Point correction. Configure only when displayed points are ±1 from actual
+# If displayed points are 1 less, set to 1 (temporary solution, fix client script instead)
+# If displayed points are 1 more, set to -1 (usually doesn't happen)
 point_fix: 0
-#登录的玩家总数量限制,如果为0则表示无上限
+# Total player count limit, 0 means unlimited
 max_client_count: 500
 #
-#每台电脑最多可以同时登录的用户数量限制,如果为0则表示无上限
-pc_max_client_count: 3
-# billing类型 0经典 1怀旧
+# Maximum users per IP address, 0 means unlimited
+ip_max_client_count: 3
+# Billing type: 0=classic, 1=retro
 bill_type: 0
 ```
 
-### json 格式的配置示例
+### JSON Configuration Example
 
 ```json
 {
@@ -152,75 +153,108 @@ bill_type: 0
   "allow_ips": [],
   "point_fix": 0,
   "max_client_count": 500,
-  "pc_max_client_count": 3,
+  "ip_max_client_count": 3,
   "bill_type": 0
 }
 ```
 
-> 如果 biiling 和服务端位于同一台服务器的情况下，建议 billing 的 IP 使用 127.0.0.1,这样可以避免绕一圈外网
+> If billing and game server are on the same machine, use 127.0.0.1 for billing IP to avoid external network routing.
 >
-> 本项目中附带的配置文件各项值为其默认值,如果你的配置中的字段的值与默认值相同,则可以省略相同的字段配置
+> The configuration file included with this project contains default values. If your configuration values match the defaults, you can omit those fields.
 
-将`billing` (Windows 服务器则是`billing.exe`)和配置文件放置于同一目录下
+Place `billing` (or `billing.exe` on Windows) and the configuration file in the same directory.
 
-修改游戏服务器的配置文件`....../tlbb/Server/Config/ServerInfo.ini`中 billing 的配置
+Modify the game server configuration file `....../tlbb/Server/Config/ServerInfo.ini` billing section:
 
 ```ini
 #........
 [Billing]
 Number=1
-#billing服务器的ip
+# Billing server IP
 IP0=127.0.0.1
-# billing服务器监听的端口
+# Billing server listening port
 Port0=12680
 #.........
 ```
 
-最后启动游戏服务端、启动 billing 即可
+Finally, start the game server and billing service.
 
-## 启动与停止
+## Starting and Stopping
 
-Linux 和 Windows 下的操作分别如下
+Operations for Linux and Windows are as follows:
 
-### 启动
+### Starting
 
-Linux 下启动 billing 方法(**前台模式**)
+**Linux foreground mode:**
 
 ```bash
-#进入billing所在文件夹,比如/home
+# Navigate to billing directory, e.g., /home
 cd /home
-#添加执行权限
+# Add execute permission
 chmod +x ./billing
-#启动billing
+# Start billing
 ./billing
 ```
 
-Linux 以守护进程后台运行 billing 的方法(**daemon 模式**)
+**Linux daemon mode:**
 
 ```bash
-#进入billing所在文件夹,比如/home
+# Navigate to billing directory, e.g., /home
 cd /home
-#添加执行权限
+# Add execute permission
 chmod +x ./billing
-#启动billing
+# Start billing as daemon
 ./billing up -d
 ```
 
-Linux 以 **systemd** 方式运行 billing 服务的方法:
-参考文件 [billing.service](billing.service)
+**Linux systemd service:**
+See reference file [billing.service](billing.service)
 
-Windows 下,直接双击`billing.exe`即可
+**Windows:** Double-click `billing.exe`
 
-### 停止
+### Stopping
 
-停止 billing 命令
+Stop billing command:
 
 ```bash
-# 使用stop命令
+# Use stop command
 ./billing stop
 
-# 也可以使用kill命令
+# Or use kill command
 kill -SIGTERM $(pgrep -f billing)
 ```
 
-如果是前台模式，可以使用 Ctrl + C 组合键停止服务器
+For foreground mode, use Ctrl + C to stop the server.
+
+## Development Commands
+
+### Code Quality Checks
+```bash
+# Install golint if not installed
+go install golang.org/x/lint/golint@latest
+
+# Run lint check
+golint ./...
+
+# Run vet check
+go vet ./...
+
+# Format code
+go fmt ./...
+```
+
+### Additional Commands
+```bash
+# View version info
+./billing version
+
+# Show online users
+./billing show-users
+```
+
+## Testing
+
+This project does not have unit tests. After making changes:
+1. Build the project using `make` (Linux) or `build.bat` (Windows)
+2. Manually test by starting the billing service
+3. Check `billing.log` for any errors
