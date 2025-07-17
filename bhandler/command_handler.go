@@ -86,6 +86,12 @@ func (h *CommandHandler) ShowIPInfo(response *common.BillingPacket) {
 	var content strings.Builder
 	content.WriteString("\n=== IP Address Information ===\n\n")
 	
+	// 添加调试信息
+	content.WriteString(fmt.Sprintf("Debug: LoginUsers count: %d\n", len(h.Resource.LoginUsers)))
+	content.WriteString(fmt.Sprintf("Debug: OnlineUsers count: %d\n", len(h.Resource.OnlineUsers)))
+	content.WriteString(fmt.Sprintf("Debug: IPCounters count: %d\n", len(h.Resource.IPCounters)))
+	content.WriteString("\n")
+	
 	// 创建一个map来存储每个IP的账号列表
 	ipAccounts := make(map[string]map[string]bool)
 	
