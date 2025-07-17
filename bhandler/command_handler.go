@@ -3,7 +3,10 @@ package bhandler
 import (
 	"bytes"
 	"context"
+	"fmt"
+	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/liuguangw/billing_go/common"
 )
@@ -27,6 +30,8 @@ func (h *CommandHandler) GetResponse(request *common.BillingPacket) *common.Bill
 	//获取billing中用户列表状态
 	if bytes.Equal(request.OpData, []byte("show_users")) {
 		h.showUsers(response)
+	} else if bytes.Equal(request.OpData, []byte("show_ip_info")) {
+		h.ShowIPInfo(response)
 	} else {
 		//./billing stop
 		//关闭billing服务
@@ -74,4 +79,85 @@ func (h *CommandHandler) showUsers(response *common.BillingPacket) {
 		}
 	}
 	response.OpData = []byte(content)
+}
+
+// ShowIPInfo 显示IP地址信息，包括每个IP的连接数和账号数
+func (h *CommandHandler) ShowIPInfo(response *common.BillingPacket) {
+	var content strings.Builder
+	content.WriteString("\n=== IP Address Information ===\n\n")
+	
+	// 创建一个map来存储每个IP的账号列表
+	ipAccounts := make(map[string]map[string]bool)
+	
+	// 从LoginUsers收集IP和账号信息
+	for username, clientInfo := range h.Resource.LoginUsers {
+		if clientInfo == nil {
+			continue
+		}
+		if _, exists := ipAccounts[clientInfo.IP]; !exists {
+			ipAccounts[clientInfo.IP] = make(map[string]bool)
+		}
+		ipAccounts[clientInfo.IP][username] = true
+	}
+	
+	// 从OnlineUsers收集IP和账号信息
+	for username, clientInfo := range h.Resource.OnlineUsers {
+		if clientInfo == nil {
+			continue
+		}
+		if _, exists := ipAccounts[clientInfo.IP]; !exists {
+			ipAccounts[clientInfo.IP] = make(map[string]bool)
+		}
+		ipAccounts[clientInfo.IP][username] = true
+	}
+	
+	// 获取所有IP地址并排序
+	var ips []string
+	for ip := range ipAccounts {
+		ips = append(ips, ip)
+	}
+	// 也包括只在IPCounters中的IP（可能没有活跃账号）
+	for ip := range h.Resource.IPCounters {
+		if _, exists := ipAccounts[ip]; !exists {
+			ips = append(ips, ip)
+			ipAccounts[ip] = make(map[string]bool)
+		}
+	}
+	sort.Strings(ips)
+	
+	// 打印表头
+	content.WriteString(fmt.Sprintf("%-20s %-15s %-15s %s\n", "IP Address", "Connections", "Accounts", "Account List"))
+	content.WriteString(strings.Repeat("-", 80) + "\n")
+	
+	// 打印每个IP的信息
+	for _, ip := range ips {
+		connections := h.Resource.IPCounters[ip]
+		accounts := ipAccounts[ip]
+		accountCount := len(accounts)
+		
+		// 获取账号列表
+		var accountList []string
+		for account := range accounts {
+			accountList = append(accountList, account)
+		}
+		sort.Strings(accountList)
+		accountListStr := strings.Join(accountList, ", ")
+		if accountListStr == "" {
+			accountListStr = "-"
+		}
+		
+		content.WriteString(fmt.Sprintf("%-20s %-15d %-15d %s\n", ip, connections, accountCount, accountListStr))
+	}
+	
+	// 打印总计
+	content.WriteString(strings.Repeat("-", 80) + "\n")
+	totalIPs := len(ips)
+	totalConnections := 0
+	for _, count := range h.Resource.IPCounters {
+		totalConnections += count
+	}
+	totalAccounts := len(h.Resource.LoginUsers) + len(h.Resource.OnlineUsers)
+	content.WriteString(fmt.Sprintf("Total: %d IPs, %d Connections, %d Unique Sessions\n", totalIPs, totalConnections, totalAccounts))
+	
+	response.OpData = []byte(content.String())
 }

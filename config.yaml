@@ -3,7 +3,7 @@ port: 12680
 db_host: 127.0.0.1
 db_port: 3306
 db_user: root
-db_password: '123456'
+db_password: 'your_password_here'
 db_name: web
 allow_old_password: false
 auto_reg: false
