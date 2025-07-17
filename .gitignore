@@ -1,5 +1,6 @@
 /billing
 /billing_go
+billing_*
 /*.exe
 /*.log
 /.idea
