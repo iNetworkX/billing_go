@@ -25,6 +25,11 @@ func (s *Server) runHealthCheck(resource *common.HandlerResource) {
 	for {
 		select {
 		case <-ticker.C:
+			// 检查是否暂停健康检查
+			if s.healthCheckPaused {
+				s.logger.Debug("Health check paused, skipping this cycle")
+				continue
+			}
 			// 执行健康检查
 			s.performHealthCheck(resource)
 		case <-time.After(time.Hour * 24 * 365): // 实际上永远不会触发，用于防止goroutine泄漏
