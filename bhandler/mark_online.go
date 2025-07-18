@@ -27,15 +27,6 @@ func markOnline(loginUsers, onlineUsers map[string]*common.ClientInfo, ipCounter
 	}
 	//写入onlineUsers
 	onlineUsers[username] = clientInfo
-	//IP计数+1
-	if clientInfo.IP != "" {
-		counterValue := 0
-		if value, valueExists := ipCounters[clientInfo.IP]; valueExists {
-			counterValue = value
-		}
-		counterValue++
-		ipCounters[clientInfo.IP] = counterValue
-	}
 	// 更新活跃连接
 	if activeConnections != nil {
 		activeConnections[username] = &common.ConnectionInfo{
