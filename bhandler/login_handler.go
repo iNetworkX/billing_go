@@ -136,14 +136,8 @@ func (h *LoginHandler) GetResponse(request *common.BillingPacket) *common.Billin
 			IP:     loginIP,
 			MacMd5: macMd5,
 		}
-		//只在成功登录时增加IP计数和记录活跃连接
+		//只在成功登录时记录活跃连接
 		if loginResult == loginCodeSuccess {
-			//增加IP计数
-			if ipCounter, exists := h.Resource.IPCounters[loginIP]; exists {
-				h.Resource.IPCounters[loginIP] = ipCounter + 1
-			} else {
-				h.Resource.IPCounters[loginIP] = 1
-			}
 			//记录活跃连接
 			h.Resource.ActiveConnections[string(username)] = &common.ConnectionInfo{
 				Username:     string(username),

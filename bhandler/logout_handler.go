@@ -49,26 +49,9 @@ func (h *LogoutHandler) GetResponse(request *common.BillingPacket) *common.Billi
 		if h.Resource.ActiveConnections != nil {
 			delete(h.Resource.ActiveConnections, usernameStr)
 		}
-	} else if clientInfo, userLoggedIn := h.Resource.LoginUsers[usernameStr]; userLoggedIn {
-		// 用户已登录但还未进入游戏
+	} else if _, userLoggedIn := h.Resource.LoginUsers[usernameStr]; userLoggedIn {
+		// 用户已登录但还未进入游戏，只删除不减少IP计数
 		delete(h.Resource.LoginUsers, usernameStr)
-		ip := clientInfo.IP
-		if ip != "" {
-			ipCounter := 0
-			if value, valueExists := h.Resource.IPCounters[ip]; valueExists {
-				ipCounter = value
-			}
-			ipCounter--
-			if ipCounter < 0 {
-				ipCounter = 0
-			}
-			// 如果IP计数器为0，从map中删除该条目以避免内存泄漏
-			if ipCounter == 0 {
-				delete(h.Resource.IPCounters, ip)
-			} else {
-				h.Resource.IPCounters[ip] = ipCounter
-			}
-		}
 		// 从活跃连接中删除
 		if h.Resource.ActiveConnections != nil {
 			delete(h.Resource.ActiveConnections, usernameStr)

@@ -132,14 +132,18 @@ func (h *CommandHandler) ShowIPInfo(response *common.BillingPacket) {
 	sort.Strings(ips)
 	
 	// 打印表头
-	content.WriteString(fmt.Sprintf("%-20s %-15s %-15s %s\n", "IP Address", "Connections", "Accounts", "Account List"))
+	content.WriteString(fmt.Sprintf("%-20s %-15s %-15s %s\n", "IP Address", "Game Connections", "Accounts", "Account List"))
 	content.WriteString(strings.Repeat("-", 80) + "\n")
 	
 	// 打印每个IP的信息
 	for _, ip := range ips {
 		connections := h.Resource.IPCounters[ip]
 		accounts := ipAccounts[ip]
-		accountCount := len(accounts)
+		// 账号数等于连接数（每个连接算作一个账号会话）
+		accountCount := connections
+		if accountCount == 0 {
+			accountCount = len(accounts)
+		}
 		
 		// 获取账号列表
 		var accountList []string
@@ -163,7 +167,7 @@ func (h *CommandHandler) ShowIPInfo(response *common.BillingPacket) {
 		totalConnections += count
 	}
 	totalAccounts := len(h.Resource.LoginUsers) + len(h.Resource.OnlineUsers)
-	content.WriteString(fmt.Sprintf("Total: %d IPs, %d Connections, %d Unique Sessions\n", totalIPs, totalConnections, totalAccounts))
+	content.WriteString(fmt.Sprintf("Total: %d IPs, %d Game Connections, %d Unique Sessions\n", totalIPs, totalConnections, totalAccounts))
 	
 	response.OpData = []byte(content.String())
 }
