@@ -31,10 +31,29 @@ func (h *EnterGameHandler) GetResponse(request *common.BillingPacket) *common.Bi
 	//角色名
 	tmpLength = int(packetReader.ReadByteValue())
 	charName := packetReader.ReadGbkString(tmpLength)
-	//标记在线
+
+	//获取客户端IP
 	clientInfo := &common.ClientInfo{
 		CharName: string(charName),
 	}
+
+	// 从loginUsers中获取IP信息
+	if loginInfo, exists := h.Resource.LoginUsers[string(username)]; exists {
+		clientInfo.IP = loginInfo.IP
+	}
+
+	// 检查IP连接数限制
+	if h.Resource.Config.IPMaxClientCount > 0 && clientInfo.IP != "" {
+		currentCount := h.Resource.IPCounters[clientInfo.IP]
+		if currentCount >= h.Resource.Config.IPMaxClientCount {
+			h.Resource.Logger.Warn("IP connection limit reached for " + clientInfo.IP + " (current: " + strconv.Itoa(currentCount) + ", limit: " + strconv.Itoa(h.Resource.Config.IPMaxClientCount) + ")")
+			// 返回错误响应，阻止进入游戏
+			response.OpData = []byte{0x0} // 返回失败标志
+			return response
+		}
+	}
+
+	//标记在线
 	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.IPCounters, h.Resource.ActiveConnections, string(username), clientInfo)
 	//角色id
 	charguid := packetReader.ReadInt()

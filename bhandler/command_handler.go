@@ -85,16 +85,16 @@ func (h *CommandHandler) showUsers(response *common.BillingPacket) {
 func (h *CommandHandler) ShowIPInfo(response *common.BillingPacket) {
 	var content strings.Builder
 	content.WriteString("\n=== IP Address Information ===\n\n")
-	
+
 	// 添加调试信息
 	content.WriteString(fmt.Sprintf("Debug: LoginUsers count: %d\n", len(h.Resource.LoginUsers)))
 	content.WriteString(fmt.Sprintf("Debug: OnlineUsers count: %d\n", len(h.Resource.OnlineUsers)))
 	content.WriteString(fmt.Sprintf("Debug: IPCounters count: %d\n", len(h.Resource.IPCounters)))
 	content.WriteString("\n")
-	
+
 	// 创建一个map来存储每个IP的账号列表
 	ipAccounts := make(map[string]map[string]bool)
-	
+
 	// 从LoginUsers收集IP和账号信息
 	for username, clientInfo := range h.Resource.LoginUsers {
 		if clientInfo == nil {
@@ -105,7 +105,7 @@ func (h *CommandHandler) ShowIPInfo(response *common.BillingPacket) {
 		}
 		ipAccounts[clientInfo.IP][username] = true
 	}
-	
+
 	// 从OnlineUsers收集IP和账号信息
 	for username, clientInfo := range h.Resource.OnlineUsers {
 		if clientInfo == nil {
@@ -116,7 +116,7 @@ func (h *CommandHandler) ShowIPInfo(response *common.BillingPacket) {
 		}
 		ipAccounts[clientInfo.IP][username] = true
 	}
-	
+
 	// 获取所有IP地址并排序
 	var ips []string
 	for ip := range ipAccounts {
@@ -130,11 +130,11 @@ func (h *CommandHandler) ShowIPInfo(response *common.BillingPacket) {
 		}
 	}
 	sort.Strings(ips)
-	
+
 	// 打印表头
 	content.WriteString(fmt.Sprintf("%-20s %-15s %-15s %s\n", "IP Address", "Game Connections", "Accounts", "Account List"))
 	content.WriteString(strings.Repeat("-", 80) + "\n")
-	
+
 	// 打印每个IP的信息
 	for _, ip := range ips {
 		connections := h.Resource.IPCounters[ip]
@@ -144,7 +144,7 @@ func (h *CommandHandler) ShowIPInfo(response *common.BillingPacket) {
 		if accountCount == 0 {
 			accountCount = len(accounts)
 		}
-		
+
 		// 获取账号列表
 		var accountList []string
 		for account := range accounts {
@@ -155,10 +155,10 @@ func (h *CommandHandler) ShowIPInfo(response *common.BillingPacket) {
 		if accountListStr == "" {
 			accountListStr = "-"
 		}
-		
+
 		content.WriteString(fmt.Sprintf("%-20s %-15d %-15d %s\n", ip, connections, accountCount, accountListStr))
 	}
-	
+
 	// 打印总计
 	content.WriteString(strings.Repeat("-", 80) + "\n")
 	totalIPs := len(ips)
@@ -168,6 +168,6 @@ func (h *CommandHandler) ShowIPInfo(response *common.BillingPacket) {
 	}
 	totalAccounts := len(h.Resource.LoginUsers) + len(h.Resource.OnlineUsers)
 	content.WriteString(fmt.Sprintf("Total: %d IPs, %d Game Connections, %d Unique Sessions\n", totalIPs, totalConnections, totalAccounts))
-	
+
 	response.OpData = []byte(content.String())
 }

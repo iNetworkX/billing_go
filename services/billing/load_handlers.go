@@ -23,6 +23,7 @@ func (s *Server) loadHandlers(cancel context.CancelFunc) *common.HandlerResource
 		OnlineUsers:       make(map[string]*common.ClientInfo),
 		IPCounters:        make(map[string]int),
 		ActiveConnections: make(map[string]*common.ConnectionInfo),
+		Config:            s.config,
 	}
 	s.handlers = make(map[byte]common.PacketHandler)
 	s.addHandler(

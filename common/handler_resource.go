@@ -14,6 +14,7 @@ type HandlerResource struct {
 	OnlineUsers       map[string]*ClientInfo     //已进入游戏的用户
 	IPCounters        map[string]int             //已连接用户的IP地址计数器（包括登录和游戏中状态）
 	ActiveConnections map[string]*ConnectionInfo //活跃连接映射，key为用户名
+	Config            *ServerConfig              //服务器配置
 }
 
 // ConnectionInfo 连接信息，用于跟踪活跃连接

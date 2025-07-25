@@ -12,13 +12,13 @@ import (
 
 // Server billing 服务
 type Server struct {
-	config            *common.ServerConfig          //配置
-	running           bool                          //是否正在运行
-	database          *sql.DB                       //数据库连接
-	listener          *net.TCPListener              //tcp listener
-	logFile           *os.File                      //已打开的日志文件
-	logger            *zap.Logger                   //日志对象
-	handlers          map[byte]common.PacketHandler //数据包handlers
+	config   *common.ServerConfig          //配置
+	running  bool                          //是否正在运行
+	database *sql.DB                       //数据库连接
+	listener *net.TCPListener              //tcp listener
+	logFile  *os.File                      //已打开的日志文件
+	logger   *zap.Logger                   //日志对象
+	handlers map[byte]common.PacketHandler //数据包handlers
 }
 
 // NewServer 创建一个Server对象
@@ -37,4 +37,3 @@ func NewServer() (*Server, error) {
 func (s *Server) Running() bool {
 	return s.running
 }
-

@@ -50,7 +50,7 @@ func markOnline(loginUsers, onlineUsers map[string]*common.ClientInfo, ipCounter
 }
 
 // updateUserActivity updates the LastActivity timestamp for a user in either LoginUsers or OnlineUsers
-func updateUserActivity(loginUsers, onlineUsers map[string]*common.ClientInfo, 
+func updateUserActivity(loginUsers, onlineUsers map[string]*common.ClientInfo,
 	activeConnections map[string]*common.ConnectionInfo, username string) {
 	// Update activity for active connections
 	if activeConnections != nil {
