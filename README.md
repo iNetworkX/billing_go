@@ -4,12 +4,7 @@ A billing verification server written in Go for game account authentication and 
 
 ## System Requirements
 
-Supports any of the following runtime environments:
-
 - Linux (Kernel version 2.6.32 or higher)
-- Windows 10, Server 2016 or higher
-
-  > Refer to Go language system requirements: https://go.dev/wiki/MinimumRequirements
 
 ## Bug Reports
 
@@ -42,18 +37,15 @@ There are two ways to obtain this program:
 
 ### 2. Manual Compilation
 
-If you want to compile manually, ensure your system meets the following requirements:
-
+Requirements:
 - Internet connection
 - Git installed
-- make installed (Linux only)
+- make installed
 - Go 1.23 or higher installed
 
-**Linux compilation using make:**
+**Compilation using make:**
 
 ```bash
-# Make commands
-
 # Build
 make
 
@@ -70,13 +62,10 @@ make x64
 make all
 ```
 
-**Windows compilation:** Double-click `build.bat`
-
 ## File Description
 
 ```
-billing       - Linux version of billing server
-billing.exe   - Windows version
+billing       - Billing server executable
 config.yaml   - Configuration file
 ```
 
@@ -162,7 +151,7 @@ bill_type: 0
 >
 > The configuration file included with this project contains default values. If your configuration values match the defaults, you can omit those fields.
 
-Place `billing` (or `billing.exe` on Windows) and the configuration file in the same directory.
+Place `billing` and the configuration file in the same directory.
 
 Modify the game server configuration file `....../tlbb/Server/Config/ServerInfo.ini` billing section:
 
@@ -181,11 +170,9 @@ Finally, start the game server and billing service.
 
 ## Starting and Stopping
 
-Operations for Linux and Windows are as follows:
-
 ### Starting
 
-**Linux foreground mode:**
+**Foreground mode:**
 
 ```bash
 # Navigate to billing directory, e.g., /home
@@ -196,7 +183,7 @@ chmod +x ./billing
 ./billing
 ```
 
-**Linux daemon mode:**
+**Daemon mode:**
 
 ```bash
 # Navigate to billing directory, e.g., /home
@@ -207,10 +194,8 @@ chmod +x ./billing
 ./billing up -d
 ```
 
-**Linux systemd service:**
+**Systemd service:**
 See reference file [billing.service](billing.service)
-
-**Windows:** Double-click `billing.exe`
 
 ### Stopping
 
@@ -255,6 +240,6 @@ go fmt ./...
 ## Testing
 
 This project does not have unit tests. After making changes:
-1. Build the project using `make` (Linux) or `build.bat` (Windows)
+1. Build the project using `make`
 2. Manually test by starting the billing service
 3. Check `billing.log` for any errors
