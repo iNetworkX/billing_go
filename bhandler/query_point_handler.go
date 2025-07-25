@@ -44,6 +44,8 @@ func (h *QueryPointHandler) GetResponse(request *common.BillingPacket) *common.B
 		CharName: string(charName),
 	}
 	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.IPCounters, h.Resource.ActiveConnections, string(username), clientInfo)
+	// Also update activity for users in character selection
+	updateUserActivity(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.ActiveConnections, string(username))
 	//
 	var accountPoint = 0
 	if account != nil {

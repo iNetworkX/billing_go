@@ -23,6 +23,5 @@ type ServerConfig struct {
 	PointFix          int      `json:"point_fix" yaml:"point_fix"`                     //用于查询点数时少1或者多1点的修正(修正值一般为0或者1)
 	MaxClientCount    int      `json:"max_client_count" yaml:"max_client_count"`       //最多允许进入的用户数量(0表示无限制)
 	IPMaxClientCount  int      `json:"ip_max_client_count" yaml:"ip_max_client_count"` //每个IP最多允许进入的用户数量(0表示无限制)
-	ConnectionTimeout int      `json:"connection_timeout" yaml:"connection_timeout"`   //连接超时时间(秒),用于健康检查清理断开的连接(0表示不启用)
 	BillType          int      `json:"bill_type" yaml:"bill_type"`                     //billing类型 0经典 1怀旧
 }

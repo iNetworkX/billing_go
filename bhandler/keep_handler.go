@@ -30,6 +30,8 @@ func (h *KeepHandler) GetResponse(request *common.BillingPacket) *common.Billing
 	//标记在线
 	clientInfo := &common.ClientInfo{}
 	markOnline(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.IPCounters, h.Resource.ActiveConnections, string(username), clientInfo)
+	// Also update activity for users in character selection
+	updateUserActivity(h.Resource.LoginUsers, h.Resource.OnlineUsers, h.Resource.ActiveConnections, string(username))
 	h.Resource.Logger.Info(fmt.Sprintf("keep: user [%s] level %d", username, playerLevel))
 	//Packets::BLRetBillingKeep
 	opData := make([]byte, 0, usernameLength+2+12)

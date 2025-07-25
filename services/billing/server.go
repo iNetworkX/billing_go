@@ -14,7 +14,6 @@ import (
 type Server struct {
 	config            *common.ServerConfig          //配置
 	running           bool                          //是否正在运行
-	healthCheckPaused bool                          //健康检查是否暂停
 	database          *sql.DB                       //数据库连接
 	listener          *net.TCPListener              //tcp listener
 	logFile           *os.File                      //已打开的日志文件
@@ -39,19 +38,3 @@ func (s *Server) Running() bool {
 	return s.running
 }
 
-// PauseHealthCheck 暂停健康检查
-func (s *Server) PauseHealthCheck() {
-	s.healthCheckPaused = true
-	s.logger.Info("Health check paused")
-}
-
-// ResumeHealthCheck 恢复健康检查
-func (s *Server) ResumeHealthCheck() {
-	s.healthCheckPaused = false
-	s.logger.Info("Health check resumed")
-}
-
-// IsHealthCheckPaused 检查健康检查是否暂停
-func (s *Server) IsHealthCheckPaused() bool {
-	return s.healthCheckPaused
-}

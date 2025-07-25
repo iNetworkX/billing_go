@@ -32,9 +32,7 @@ func (s *Server) Run(logFilePath string) error {
 	s.logger.Info("billing server run at " + s.listener.Addr().String())
 	ctx, cancel := context.WithCancel(context.Background())
 	//载入handlers
-	resource := s.loadHandlers(cancel)
-	//启动连接健康检查
-	go s.runHealthCheck(resource)
+	s.loadHandlers(cancel)
 	//循环accept tcp
 	go s.runAcceptLoop()
 	//关注signal

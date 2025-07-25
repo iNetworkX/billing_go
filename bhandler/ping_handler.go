@@ -25,6 +25,8 @@ func (h *PingHandler) GetResponse(request *common.BillingPacket) *common.Billing
 	zoneID := packetReader.ReadUint16()
 	worldID := packetReader.ReadUint16()
 	playerCount := packetReader.ReadUint16()
+	// Update server activity (no specific user in ping packets)
+	
 	//当玩家数发生变化时,记录信息
 	if h.currentPlayerCount != playerCount {
 		h.currentPlayerCount = playerCount

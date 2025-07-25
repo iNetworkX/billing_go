@@ -25,7 +25,6 @@ func defaultServerConfig() *common.ServerConfig {
 		PointFix:          0,
 		MaxClientCount:    500,
 		IPMaxClientCount:  3,
-		ConnectionTimeout: 300,
 	}
 }
 
