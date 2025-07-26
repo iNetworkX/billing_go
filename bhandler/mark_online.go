@@ -10,12 +10,7 @@ func markOnline(loginUsers, onlineUsers map[string]*common.ClientInfo, ipCounter
 	activeConnections map[string]*common.ConnectionInfo, username string, clientInfo *common.ClientInfo) {
 	//已经标记为登录了
 	if _, userOnline := onlineUsers[username]; userOnline {
-		// 用户已经在游戏中，仍然增加IP计数（支持同账号多连接）
-		if ipCounter, exists := ipCounters[clientInfo.IP]; exists {
-			ipCounters[clientInfo.IP] = ipCounter + 1
-		} else {
-			ipCounters[clientInfo.IP] = 1
-		}
+		// 用户已经在游戏中，只更新活跃时间，不增加计数
 		// 更新活跃连接时间戳
 		if conn, exists := activeConnections[username]; exists {
 			conn.LastActivity = time.Now()
